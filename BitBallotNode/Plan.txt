@@ -1,0 +1,7 @@
+Node:
+    Recieve votes
+    Verify votes
+    Add votes to blockchain
+    Send new blocks to other nodes
+    Accept new blocks from other nodes
+    Verify integrity of blocks from other nodes through key signing
