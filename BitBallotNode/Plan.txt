@@ -5,3 +5,12 @@ Node:
     Send new blocks to other nodes
     Accept new blocks from other nodes
     Verify integrity of blocks from other nodes through key signing
+
+    Register:
+        Voter sends their QR code(user_id), and their public key (keypair derived from password)
+        Node stores the user_id, and public key in a new "register" block
+
+    Vote:
+        Voter sends their user_id, signed with the same password as registered with; and their candidate choice
+        Node checks if signature matches the public key saved for the user_id
+
