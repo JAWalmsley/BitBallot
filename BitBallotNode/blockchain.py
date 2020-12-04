@@ -33,6 +33,14 @@ class Block:
 
 class RegisterBlock(Block):
     def __init__(self, prev_hash: bytes, time: float, user_id: str, public_key: str):
+        """
+        A block announcing a voter's registration
+
+        :param prev_hash: The hash of the previous block
+        :param time: The timestamp the block was created
+        :param user_id: The user_id of the new voter
+        :param public_key: The public key of the new voter, derived from a password
+        """
         super().__init__(prev_hash, time, user_id)
         pem_prefix = '-----BEGIN PUBLIC KEY-----\n'
         pem_suffix = '\n-----END PUBLIC KEY-----'
@@ -54,6 +62,15 @@ class RegisterBlock(Block):
 
 class VoteBlock(Block):
     def __init__(self, prev_hash: bytes, time: float, user_id: str, signature: str, choice):
+        """
+        A block announcing a registered voter's vote for a candidate
+
+        :param prev_hash: The hash of the previous block
+        :param time: The timestamp the block was created
+        :param user_id: The user_id of the voting voter
+        :param signature: The signature of the choice, made with voter's private key
+        :param choice: The candidate the vote is cast for
+        """
         super().__init__(prev_hash, time, user_id)
         self.signature = signature
         # TODO: Verify signature based on public key in registration block
@@ -74,6 +91,9 @@ class VoteBlock(Block):
 
 class Blockchain:
     def __init__(self):
+        """
+        A blockchain, containing many linked Blocks
+        """
         self.blocks = []
         self.registration_blocks = []
 
