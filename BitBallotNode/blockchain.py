@@ -1,10 +1,12 @@
 # Jack Walmsley 2020-12-02
 import abc
+import struct
 from datetime import datetime
 
-import struct
-
 from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+
+from exceptions import *
 
 
 class Block:
@@ -42,10 +44,11 @@ class RegisterBlock(Block):
         :param public_key: The public key of the new voter, derived from a password
         """
         super().__init__(prev_hash, time, user_id)
-        pem_prefix = '-----BEGIN PUBLIC KEY-----\n'
-        pem_suffix = '\n-----END PUBLIC KEY-----'
-        pem_data = '{}{}{}'.format(pem_prefix, public_key, pem_suffix)
-        self.public_key = serialization.load_pem_public_key(pem_data.encode())
+        pem_data = public_key
+        # pem_prefix = '-----BEGIN PUBLIC KEY-----\n'
+        # pem_suffix = '\n-----END PUBLIC KEY-----'
+        # pem_data = '{}{}{}'.format(pem_prefix, public_key, pem_suffix)
+        self.public_key: rsa.RSAPublicKey = serialization.load_pem_public_key(pem_data.encode())
 
     def get_hash(self):
         """
@@ -54,14 +57,19 @@ class RegisterBlock(Block):
         :return: hash of this block
         :rtype str
         """
-        block_data = self.prev_hash + struct.pack("!f", self.time) + self.user_id.encode() + self.public_key
+        block_data = self.prev_hash
+        block_data += bytearray(struct.pack("f", self.time))
+        block_data += self.user_id.encode()
+        block_data += self.public_key.public_bytes(serialization.Encoding.PEM,
+                                                   serialization.PublicFormat.SubjectPublicKeyInfo)
+
         digest = hashes.Hash(hashes.SHA256())
-        digest.update(block_data.encode())
+        digest.update(block_data)
         return digest.finalize()
 
 
 class VoteBlock(Block):
-    def __init__(self, prev_hash: bytes, time: float, user_id: str, signature: str, choice):
+    def __init__(self, prev_hash: bytes, time: float, user_id: str, signature: str, choice: str):
         """
         A block announcing a registered voter's vote for a candidate
 
@@ -73,7 +81,6 @@ class VoteBlock(Block):
         """
         super().__init__(prev_hash, time, user_id)
         self.signature = signature
-        # TODO: Verify signature based on public key in registration block
         self.choice = choice
 
     def get_hash(self):
@@ -83,9 +90,14 @@ class VoteBlock(Block):
         :return: hash of this block
         :rtype str
         """
-        block_data = self.prev_hash + struct.pack("!f", self.time) + self.user_id.encode() + self.signature.encode() + self.choice
+        block_data = self.prev_hash
+        block_data += bytearray(struct.pack("!f", self.time))
+        block_data += self.user_id.encode()
+        block_data += self.signature.encode()
+        block_data += self.choice.encode()
+
         digest = hashes.Hash(hashes.SHA256())
-        digest.update(block_data.encode())
+        digest.update(block_data)
         return digest.finalize()
 
 
@@ -97,17 +109,24 @@ class Blockchain:
         self.blocks = []
         self.registration_blocks = []
 
+    def get_latest_hash(self):
+        if len(self.blocks) > 0:
+            return self.blocks[-1].get_hash()
+        else:
+            return bytes(0)
+
     def get_registration_block(self, user_id):
         """
         Finds a user's registration block
 
         :param user_id: The id attached to the block
-        :return: the height of the user's registration block
-        :rtype int
+        :return: the user's registration block
+        :rtype RegisterBlock
         """
         for b in self.blocks:
             if type(b) == RegisterBlock and b.user_id == user_id:
                 return b
+        raise UserNotRegisteredError
 
     def register_user(self, user_id: str, public_key: str):
         """
@@ -118,10 +137,28 @@ class Blockchain:
         :return: The block containing the new voter's registration
         """
         # TODO: Implement hashing of previous block
-        if len(self.blocks) > 0:
-            prev_hash = self.blocks[-1].get_hash()
-        else:
-            prev_hash = 0
+        prev_hash = self.get_latest_hash()
         new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, public_key)
+        self.blocks.append(new_block)
+        return new_block
+
+    def cast_vote(self, user_id: str, signature: str, choice: str):
+        """
+        Casts a voter's vote
+
+        :param user_id: The user_id of the voter
+        :param signature: The singature of the choice, made with voter's private key
+        :param choice: The candidate choice of the voter
+        :return: The block containing the voter's vote
+        """
+        pad = padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        )
+
+        prev_hash = self.get_latest_hash()
+        public_key = self.get_registration_block(user_id).public_key
+        public_key.verify(signature.encode(), choice.encode(), pad, hashes.SHA256())
+        new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, signature, choice)
         self.blocks.append(new_block)
         return new_block
