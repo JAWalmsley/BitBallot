@@ -1,5 +1,6 @@
 # Jack Walmsley 2020-12-04
 import unittest
+import base64
 
 from cryptography.exceptions import InvalidSignature
 
@@ -33,7 +34,7 @@ class BlockchainTests(unittest.TestCase):
                                                                   serialization.PublicFormat.SubjectPublicKeyInfo).decode(
             'utf-8')
 
-        self.assertRaises(UserNotRegisteredError, self.chain.get_registration_block('invalidID'))
+        self.assertRaises(UserNotRegisteredError, self.chain.get_registration_block, 'invalidID')
 
         first_block = self.chain.register_user(self.test_user_id, public_key_str)
         self.assertIsInstance(first_block, RegisterBlock)
@@ -45,8 +46,6 @@ class BlockchainTests(unittest.TestCase):
     def cast_vote(self):
         """
         Tests using the registered user to vote
-
-        :return:
         """
         choice1 = 'The Rhino Party'
         choice2 = 'The Even More Rhino Party'
@@ -56,23 +55,22 @@ class BlockchainTests(unittest.TestCase):
         )
 
         with self.assertRaises(InvalidSignature):
-            self.chain.cast_vote(self.test_user_id, 'invalidsignature', 'The Hippopotamus Party')
+            self.chain.cast_vote(self.test_user_id, base64.urlsafe_b64encode(b'invalidsignature'), 'The Hippopotamus Party')
 
         # RSAPrivateKey.sign() returns a bytearray which is ultimately what we want, but this will be arriving from a
-        # client over HTTP so will be strings. Therefore we convert bytes to str
-        first_block = self.chain.cast_vote(self.test_user_id,
-                                           str(self.testkey.sign(choice1.encode(), pad, hashes.SHA256())),
-                                           choice1)
+        # client over HTTP so will be strings. Therefore we convert bytes to base64 encoded str
+        sig = base64.urlsafe_b64encode(self.testkey.sign(choice1.encode(), pad, hashes.SHA256())).decode()
+        first_block = self.chain.cast_vote(self.test_user_id, sig, choice1)
         self.assertIsInstance(first_block, VoteBlock)
 
-        second_block = self.chain.cast_vote(self.test_user_id2,
-                                            str(self.testkey2.sign(choice2.encode(), pad, hashes.SHA256())), choice2)
-
+        sig = base64.urlsafe_b64encode(self.testkey2.sign(choice2.encode(), pad, hashes.SHA256())).decode()
+        second_block = self.chain.cast_vote(self.test_user_id2, sig, choice2)
         self.assertEqual(second_block.prev_hash, first_block.get_hash())
 
     def test_blockchain(self):
         self.register_user()
         self.cast_vote()
+
 
 if __name__ == '__main__':
     unittest.main()

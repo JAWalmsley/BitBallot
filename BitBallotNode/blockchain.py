@@ -1,6 +1,7 @@
 # Jack Walmsley 2020-12-02
 import abc
 import struct
+import base64
 from datetime import datetime
 
 from cryptography.hazmat.primitives import serialization, hashes
@@ -147,7 +148,7 @@ class Blockchain:
         Casts a voter's vote
 
         :param user_id: The user_id of the voter
-        :param signature: The singature of the choice, made with voter's private key
+        :param signature: base64 format. The singature of the choice, made with voter's private key
         :param choice: The candidate choice of the voter
         :return: The block containing the voter's vote
         """
@@ -158,7 +159,7 @@ class Blockchain:
 
         prev_hash = self.get_latest_hash()
         public_key = self.get_registration_block(user_id).public_key
-        public_key.verify(signature.encode(), choice.encode(), pad, hashes.SHA256())
+        public_key.verify(base64.urlsafe_b64decode(signature), choice.encode(), pad, hashes.SHA256())
         new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, signature, choice)
         self.blocks.append(new_block)
         return new_block
