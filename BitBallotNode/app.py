@@ -1,6 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
+import json
+
+from blockchain import Blockchain
+from exceptions import *
+
+from cryptography.exceptions import InvalidSignature
 
 app = Flask(__name__)
+bc = Blockchain()
 
 
 @app.route('/register', methods=['POST'])
@@ -9,8 +16,18 @@ def register():
 
     Registers a new voter
     """
-    user_id = request.form["user_id"]
-    return user_id
+    data = json.loads(request.get_data().decode(), strict=False)
+
+    ui = data['user_id']
+    pk = data['public_key']
+
+    try:
+        bc.register_user(ui, pk)
+    except UserAlreadyExistsError:
+        return 'User Already Registered', 409
+    except ValueError:
+        return 'Invalid Key', 406
+    return 'Success', 201
 
 
 @app.route('/vote', methods=['POST'])
@@ -19,10 +36,20 @@ def vote():
 
     Submits a vote for a candidate
     """
-    # TODO: Verify user id 
-    user_id = request.form["user_id"]
-    choice = request.form["choice"]
-    return jsonify([user_id, choice])
+    # TODO: Verify user id
+    data = json.loads(request.get_data().decode(), strict=False)
+
+    ui = data['user_id']
+    sg = data['signature']
+    ch = data['choice']
+    print(sg)
+    try:
+        bc.cast_vote(ui, sg, ch)
+    except InvalidSignature:
+        return 'Invalid Signature', 406
+    except UserNotRegisteredError:
+        return 'User Not Registered', 409
+    return 'Success', 201
 
 
 @app.route('/sync', methods=['POST'])

@@ -2,5 +2,6 @@
 class UserNotRegisteredError(Exception):
     pass
 
+
 class UserAlreadyExistsError(Exception):
     pass
