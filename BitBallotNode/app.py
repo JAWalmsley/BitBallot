@@ -16,9 +16,8 @@ def register():
 
     Registers a new voter
     """
-    data = json.loads(request.get_data().decode(), strict=False)
-    ui = data['user_id']
-    pw = data['password']
+    ui = request.form['user_id']
+    pw = request.form['password']
 
     try:
         bc.register_user(ui, pw)
@@ -35,11 +34,10 @@ def vote():
 
     Submits a vote for a candidate
     """
-    data = json.loads(request.get_data().decode(), strict=False)
-
-    ui = data['user_id']
-    pw = data['password']
-    ch = data['choice']
+    ui = request.form['user_id']
+    pw = request.form['password']
+    ch = request.form['choice']
+    print(ui, pw, ch)
     try:
         bc.cast_vote(ui, pw, ch)
     except InvalidSignature:
