@@ -1,11 +1,12 @@
 # Jack Walmsley 2020-12-02
 import abc
 import struct
-import base64
 from datetime import datetime
 
 from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric import ec
+
+import base64
 
 from exceptions import *
 
@@ -33,23 +34,36 @@ class Block:
         """
         return
 
+    @staticmethod
+    def password_to_key(password: str):
+        """
+        Derives a private key from the given password
+
+        :param password: The password to derive key from
+        :return: A private key derived from the password
+        :rtype: ec.EllipticCurvePrivateKey
+        """
+        curve = ec.SECP256R1()  # Elliptic curve
+        digest = hashes.Hash(hashes.SHA256())
+        digest.update(password.encode())
+        password_int = int.from_bytes(digest.finalize(), "big")
+        return ec.derive_private_key(password_int, curve)
+
 
 class RegisterBlock(Block):
-    def __init__(self, prev_hash: bytes, time: float, user_id: str, public_key: str):
+    def __init__(self, prev_hash: bytes, time: float, user_id: str, password: str):
         """
         A block announcing a voter's registration
 
         :param prev_hash: The hash of the previous block
         :param time: The timestamp the block was created
         :param user_id: The user_id of the new voter
-        :param public_key: The public key of the new voter, derived from a password
+        :param password: The password of the new voter, for deriving cryptographic keys
         """
         super().__init__(prev_hash, time, user_id)
-        pem_data = public_key
-        # pem_prefix = '-----BEGIN PUBLIC KEY-----\n'
-        # pem_suffix = '\n-----END PUBLIC KEY-----'
-        # pem_data = '{}{}{}'.format(pem_prefix, public_key, pem_suffix)
-        self.public_key: rsa.RSAPublicKey = serialization.load_pem_public_key(pem_data.encode())
+
+        # Dervice a public key from the password
+        self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password).public_key()
 
     def get_hash(self):
         """
@@ -61,8 +75,8 @@ class RegisterBlock(Block):
         block_data = self.prev_hash
         block_data += bytearray(struct.pack("f", self.time))
         block_data += self.user_id.encode()
-        block_data += self.public_key.public_bytes(serialization.Encoding.PEM,
-                                                   serialization.PublicFormat.SubjectPublicKeyInfo)
+        block_data += self.public_key.public_bytes(serialization.Encoding.X962,
+                                                   serialization.PublicFormat.CompressedPoint)
 
         digest = hashes.Hash(hashes.SHA256())
         digest.update(block_data)
@@ -128,40 +142,42 @@ class Blockchain:
                 return b
         raise UserNotRegisteredError
 
-    def register_user(self, user_id: str, public_key: str):
+    def register_user(self, user_id: str, password: str):
         """
         Registers a new voter
 
         :param user_id: The user_id of the new voter
-        :param public_key: The voter's public key, derived from password
+        :param password: The voter's password, for key derivation
         :return: The block containing the new voter's registration
+        :rtype RegisterBlock
         """
         # TODO: Implement hashing of previous block
         prev_hash = self.get_latest_hash()
-        new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, public_key)
+        new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, password)
         for b in self.blocks:
             if b.user_id == user_id:
                 raise UserAlreadyExistsError
         self.blocks.append(new_block)
         return new_block
 
-    def cast_vote(self, user_id: str, signature: str, choice: str):
+    def cast_vote(self, user_id: str, password: str, choice: str):
         """
         Casts a voter's vote
 
         :param user_id: The user_id of the voter
-        :param signature: base64 format. The singature of the choice, made with voter's private key
+        :param password: The user's password
         :param choice: The candidate choice of the voter
         :return: The block containing the voter's vote
+        :rtype VoteBlock
         """
-        pad = padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.MAX_LENGTH
-        )
+
+        user_private_key = Block.password_to_key(password)
+        signature = user_private_key.sign(choice.encode(), ec.ECDSA(hashes.SHA256()))
+
+        user_public_key = self.get_registration_block(user_id).public_key
+        user_public_key.verify(signature, choice.encode(), ec.ECDSA(hashes.SHA256()))
 
         prev_hash = self.get_latest_hash()
-        public_key = self.get_registration_block(user_id).public_key
-        public_key.verify(base64.urlsafe_b64decode(signature), choice.encode(), pad, hashes.SHA256())
-        new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, signature, choice)
+        new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, base64.b64encode(signature).decode(), choice)
         self.blocks.append(new_block)
         return new_block
