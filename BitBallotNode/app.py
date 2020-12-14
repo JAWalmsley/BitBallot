@@ -1,7 +1,7 @@
 import json
 
 from cryptography.exceptions import InvalidSignature
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from blockchain import Blockchain
 from exceptions import *
@@ -64,7 +64,7 @@ def sync():
 
 @app.route('/get_blockchain', methods=['GET'])
 def get_blockchain():
-    pass
+    return jsonify(bc.__dict__())
 
 
 if __name__ == '__main__':
