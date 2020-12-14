@@ -1,7 +1,5 @@
-import json
-
 from cryptography.exceptions import InvalidSignature
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 
 from blockchain import Blockchain
 from exceptions import *
@@ -18,14 +16,14 @@ def register():
     """
     ui = request.form['user_id']
     pw = request.form['password']
-
+    redir = request.form['redirect']
     try:
         bc.register_user(ui, pw)
     except UserAlreadyExistsError:
-        return 'User Already Registered', 409
+        return redirect(redir + "?status=UserAlreadyRegistered")
     except ValueError:
-        return 'Invalid Key', 406
-    return 'Success', 201
+        return redirect(redir + "?status=InvalidKey")
+    return redirect(redir + "?status=Registered")
 
 
 @app.route('/vote', methods=['POST'])
@@ -37,14 +35,15 @@ def vote():
     ui = request.form['user_id']
     pw = request.form['password']
     ch = request.form['choice']
+    redir = request.form['redirect']
     print(ui, pw, ch)
     try:
         bc.cast_vote(ui, pw, ch)
     except InvalidSignature:
-        return 'Invalid Signature', 406
+        return redirect(redir + "?status=InvalidSignature")
     except UserNotRegisteredError:
-        return 'User Not Registered', 409
-    return 'Success', 201
+        return redirect(redir + "?status=UserNotRegistered")
+    return redirect(redir + "?status=Voted")
 
 
 @app.route('/sync', methods=['POST'])
