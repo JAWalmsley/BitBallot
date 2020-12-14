@@ -17,12 +17,11 @@ def register():
     Registers a new voter
     """
     data = json.loads(request.get_data().decode(), strict=False)
-
     ui = data['user_id']
-    pk = data['public_key']
+    pw = data['password']
 
     try:
-        bc.register_user(ui, pk)
+        bc.register_user(ui, pw)
     except UserAlreadyExistsError:
         return 'User Already Registered', 409
     except ValueError:
@@ -36,15 +35,13 @@ def vote():
 
     Submits a vote for a candidate
     """
-    # TODO: Verify user id
     data = json.loads(request.get_data().decode(), strict=False)
 
     ui = data['user_id']
-    sg = data['signature']
+    pw = data['password']
     ch = data['choice']
-    print(sg)
     try:
-        bc.cast_vote(ui, sg, ch)
+        bc.cast_vote(ui, pw, ch)
     except InvalidSignature:
         return 'Invalid Signature', 406
     except UserNotRegisteredError:
