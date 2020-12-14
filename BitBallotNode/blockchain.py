@@ -1,12 +1,11 @@
 # Jack Walmsley 2020-12-02
 import abc
+import base64
 import struct
 from datetime import datetime
 
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import ec
-
-import base64
 
 from exceptions import *
 
@@ -23,6 +22,16 @@ class Block:
         self.prev_hash = prev_hash
         self.time = time
         self.user_id = user_id
+
+    @abc.abstractmethod
+    def __dict__(self):
+        """
+        A dictionary representation of the block
+
+        :return: dict of this block
+        :rtype dict
+        """
+        return
 
     @abc.abstractmethod
     def get_hash(self):
@@ -65,6 +74,22 @@ class RegisterBlock(Block):
         # Dervice a public key from the password
         self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password).public_key()
 
+    def __dict__(self):
+        """
+        A dictionary representation of the block
+
+        :return: dict of this block
+        :rtype dict
+        """
+        result = {}
+        result['block_type'] = 'register'
+        result['prev_hash'] = base64.b64encode(self.prev_hash).decode()
+        result['timestamp'] = self.time
+        result['user_id'] = self.user_id
+        result['public_key'] = base64.b64encode(self.public_key.public_bytes(serialization.Encoding.X962,
+                                                                             serialization.PublicFormat.CompressedPoint)).decode()
+        return result
+
     def get_hash(self):
         """
         The SHA-256 hash of the contents of the block
@@ -98,6 +123,22 @@ class VoteBlock(Block):
         self.signature = signature
         self.choice = choice
 
+    def __dict__(self):
+        """
+        A dictionary representation of the block
+
+        :return: dict of this block
+        :rtype dict
+        """
+        result = {}
+        result['block_type'] = 'vote'
+        result['prev_hash'] = base64.b64encode(self.prev_hash).decode()
+        result['timestamp'] = self.time
+        result['user_id'] = self.user_id
+        result['signature'] = self.signature
+        result['choice'] = self.choice
+        return result
+
     def get_hash(self):
         """
         The SHA-256 hash of the contents of the block
@@ -122,6 +163,12 @@ class Blockchain:
         A blockchain, containing many linked Blocks
         """
         self.blocks = []
+
+    def __dict__(self):
+        d = {}
+        for b in self.blocks:
+            d[self.blocks.index(b)] = b.__dict__()
+        return d
 
     def get_latest_hash(self):
         if len(self.blocks) > 0:
@@ -178,6 +225,7 @@ class Blockchain:
         user_public_key.verify(signature, choice.encode(), ec.ECDSA(hashes.SHA256()))
 
         prev_hash = self.get_latest_hash()
-        new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, base64.b64encode(signature).decode(), choice)
+        new_block = VoteBlock(prev_hash, datetime.utcnow().timestamp(), user_id, base64.b64encode(signature).decode(),
+                              choice)
         self.blocks.append(new_block)
         return new_block
