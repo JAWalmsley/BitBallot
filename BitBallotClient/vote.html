@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - BitBallot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body style="background-color: slategray">
+<div class="jumbotron d-flex align-items-center min-vh-100">
+    <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
+        <a href="index.html" class="btn btn-secondary" type="button">Back</a>
+        <h1 class="display-1">Vote</h1>
+        <form>
+            <div class="form-group">
+                <label for="userid">User ID</label>
+                <input required type="text" class="form-control" id="userid" placeholder="User ID">
+                <small id="useridHelp" class="form-text text-muted">Scan your QR code</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input required type="password" class="form-control" id="password" placeholder="Password">
+                <small id="passwordHelp" class="form-text text-muted">Choose a long, secure password</small>
+            </div>
+            <div class="form-group">
+                <label for="choice">Candidate</label>
+                <select required class="form-control" id="choice">
+                    <option value="" selected disabled hidden>Select a candidate</option>
+                    <option value="1">The Rhino Party</option>
+                    <option value="2">The Extra Rhino Party</option>
+                    <option value="3">The Hippopotamus Party</option>
+                    <option value="4">The Rhino-Hippopotamus Coalition Party</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+<footer class="text-center" style="position:absolute; bottom: 0%; width: 100vw;"><small> Copyright &copy; 2020 Jack
+    Walmsley. All Rights Reserved</small></footer>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
