@@ -40,6 +40,8 @@ class BlockchainTests(unittest.TestCase):
         self.assertIsInstance(first_block, RegisterBlock)
         self.assertEqual(self.chain.get_registration_block(self.test_user_id), first_block)
 
+        self.assertRaises(UserAlreadyExistsError, self.chain.register_user, self.test_user_id, public_key_str)
+
         second_block = self.chain.register_user(self.test_user_id2, public_key_str2)
         self.assertEqual(second_block.prev_hash, first_block.get_hash())
 

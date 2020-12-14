@@ -108,7 +108,6 @@ class Blockchain:
         A blockchain, containing many linked Blocks
         """
         self.blocks = []
-        self.registration_blocks = []
 
     def get_latest_hash(self):
         if len(self.blocks) > 0:
@@ -140,6 +139,9 @@ class Blockchain:
         # TODO: Implement hashing of previous block
         prev_hash = self.get_latest_hash()
         new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, public_key)
+        for b in self.blocks:
+            if b.user_id == user_id:
+                raise UserAlreadyExistsError
         self.blocks.append(new_block)
         return new_block
 
