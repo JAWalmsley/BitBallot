@@ -1,10 +1,10 @@
-from flask import Flask, request
 import json
+
+from cryptography.exceptions import InvalidSignature
+from flask import Flask, request
 
 from blockchain import Blockchain
 from exceptions import *
-
-from cryptography.exceptions import InvalidSignature
 
 app = Flask(__name__)
 bc = Blockchain()
@@ -60,6 +60,11 @@ def sync():
 
     new_block = request.form["new_block"]
     return new_block
+
+
+@app.route('/get_blockchain', methods=['GET'])
+def get_blockchain():
+    pass
 
 
 if __name__ == '__main__':
