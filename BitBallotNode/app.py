@@ -36,7 +36,6 @@ def vote():
     pw = request.form['password']
     ch = request.form['choice']
     redir = request.form['redirect']
-    print(ui, pw, ch)
     try:
         bc.cast_vote(ui, pw, ch)
     except InvalidSignature:
