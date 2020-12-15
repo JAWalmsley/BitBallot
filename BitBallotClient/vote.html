@@ -8,11 +8,11 @@
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 <body style="background-color: slategray">
-<div class="jumbotron d-flex align-items-center min-vh-100">
+<div class="d-flex align-items-center" style="height:95vh">
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
         <a href="index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1">Vote</h1>
-        <form action="http://localhost:5000/vote" method="post">
+        <form action="http://192.168.2.242:5000/vote" method="post">
             <div class="form-group">
                 <label for="user_id">User ID</label>
                 <input required type="text" class="form-control" id="user_id" placeholder="User ID" name="user_id">
@@ -33,13 +33,16 @@
                     <option name="The Rhino-Hippopotamus Coalition Party">The Rhino-Hippopotamus Coalition Party</option>
                 </select>
             </div>
-            <input type="hidden" name="redirect" value="http://localhost/after_submit.html">
+            <input type="hidden" name="redirect" value="http://192.168.2.242/after_submit.html">
             <input type="submit" class="btn btn-primary" value="Vote">
         </form>
     </div>
 </div>
-<footer class="text-center" style="position:absolute; bottom: 0%; width: 100vw;"><small> Copyright &copy; 2020 Jack
-    Walmsley. All Rights Reserved</small></footer>
+<footer>
+    <div class="container text-center">
+        <small>Copyright &copy; 2020 Jack Walmsley. All Rights Reserved</small>
+    </div>
+</footer>
 
 <script src="https://code.jquery.com/jquery.js"></script>
 <script src="js/bootstrap.min.js"></script>

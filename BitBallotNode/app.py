@@ -1,10 +1,14 @@
 from cryptography.exceptions import InvalidSignature
 from flask import Flask, request, jsonify, redirect
+from flask_cors import CORS, cross_origin
 
 from blockchain import Blockchain
 from exceptions import *
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 bc = Blockchain()
 
 
@@ -59,9 +63,10 @@ def sync():
 
 
 @app.route('/get_blockchain', methods=['GET'])
+@cross_origin()
 def get_blockchain():
     return jsonify(bc.__dict__())
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='192.168.2.242')

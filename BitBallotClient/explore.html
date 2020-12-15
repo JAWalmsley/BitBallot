@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home - BitBallot</title>
+    <title>Vote - BitBallot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="json-view-master/dist/jsonview.bundle.css">
+    <script src="json-view-master/dist/jsonview.bundle.js"></script>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
-<body>
 <body style="background-color: slategray">
 <div class="d-flex align-items-center" style="height:95vh">
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
         <a href="index.html" class="btn btn-secondary" type="button">Back</a>
-        <h1 class="display-1" id="title">____</h1>
-        <p class="text-muted" id="message">____</p>
+        <h1 class="display-1">Blockchain Explorer</h1>
+        <div class="root"></div>
     </div>
 </div>
 <footer>
@@ -21,8 +22,22 @@
         <small>Copyright &copy; 2020 Jack Walmsley. All Rights Reserved</small>
     </div>
 </footer>
+
 <script src="https://code.jquery.com/jquery.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="response_manager.js"></script>
+<script>
+    let jsondata;
+
+    let req = new XMLHttpRequest();
+    req.open('GET', 'http://192.168.2.242:5000/get_blockchain', false);
+    req.send(null);
+
+    if (req.status == 200) {
+        jsondata = req.responseText;
+    }
+
+    const tree = JsonView.renderJSON(jsondata, document.querySelector('.root'));
+</script>
+
 </body>
 </html>
