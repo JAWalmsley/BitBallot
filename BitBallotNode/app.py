@@ -20,14 +20,13 @@ def register():
     """
     ui = request.form['user_id']
     pw = request.form['password']
-    redir = request.form['redirect']
     try:
         bc.register_user(ui, pw)
     except UserAlreadyExistsError:
-        return redirect(redir + "?status=UserAlreadyRegistered")
+        return 'UserAlreadyRegistered'
     except ValueError:
-        return redirect(redir + "?status=InvalidKey")
-    return redirect(redir + "?status=Registered")
+        return 'InvalidKey'
+    return 'Registered'
 
 
 @app.route('/vote', methods=['POST'])
@@ -39,14 +38,13 @@ def vote():
     ui = request.form['user_id']
     pw = request.form['password']
     ch = request.form['choice']
-    redir = request.form['redirect']
     try:
         bc.cast_vote(ui, pw, ch)
     except InvalidSignature:
-        return redirect(redir + "?status=InvalidSignature")
+        return 'InvalidSignature'
     except UserNotRegisteredError:
-        return redirect(redir + "?status=UserNotRegistered")
-    return redirect(redir + "?status=Voted")
+        return 'UserNotRegistered'
+    return 'Voted'
 
 
 @app.route('/sync', methods=['POST'])

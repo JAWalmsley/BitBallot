@@ -13,7 +13,7 @@
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
         <a href="index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1">Register</h1>
-        <form method="post" action="">
+        <form method="post" action="http://localhost:5000/register">
             <div class="form-group">
                 <label for="user_id">User ID</label>
                 <input type="text" class="form-control" id="user_id" placeholder="User ID" name="user_id">
@@ -24,7 +24,6 @@
                 <input type="password" class="form-control" id="password" placeholder="Password" name="password">
                 <small id="passwordHelp" class="form-text text-muted">Choose a long, secure password</small>
             </div>
-            <input type="hidden" name="redirect" value="http://localhost/after_submit.html">
             <input type="button" class="btn btn-primary" value="Register">
         </form>
     </div>
@@ -35,6 +34,5 @@
 </script>
 <script src="js/bootstrap.min.js"></script>
 <script src="form_handler.js"></script>
-
 </body>
 </html>
