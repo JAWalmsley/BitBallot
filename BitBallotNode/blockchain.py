@@ -71,8 +71,8 @@ class RegisterBlock(Block):
         """
         super().__init__(prev_hash, time, user_id)
 
-        # Dervice a public key from the password
-        self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password).public_key()
+        # Derive a public key from the password. Add user_id to password as salt
+        self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password+user_id).public_key()
 
     def __dict__(self):
         """
@@ -218,7 +218,8 @@ class Blockchain:
         :rtype VoteBlock
         """
 
-        user_private_key = Block.password_to_key(password)
+        # user_id is appended to password as salt
+        user_private_key = Block.password_to_key(password+user_id)
         signature = user_private_key.sign(choice.encode(), ec.ECDSA(hashes.SHA256()))
 
         user_public_key = self.get_registration_block(user_id).public_key
