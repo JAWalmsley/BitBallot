@@ -49,8 +49,9 @@ def vote():
     return 'Voted'
 
 
-@app.route('/tally', methods=['GET'])
-def tally():
+@app.route('/get_tally', methods=['GET'])
+@cross_origin()
+def get_tally():
     return jsonify(bc.get_vote_tally())
 
 
