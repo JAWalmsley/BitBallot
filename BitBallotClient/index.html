@@ -9,16 +9,19 @@
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 <body style="background-color: slategray">
-<div class="d-flex align-items-center text-center" style="height:95vh">
-    <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
-        <h1 class="display-1">BitBallot</h1>
-        <a href="register.html" class="btn btn-primary" type="button">Register To Vote</a>
-        <a href="vote.html" class="btn btn-primary" type="button">Cast Your Vote</a>
-        <div style="height: 1vh"><br></div>
-        <a href="explore.html" class="btn btn-info">Blockchain</a>
-        <a href="tally.html" class="btn btn-info">Live Results</a>
+<div class="d-flex align-items-center" style="height:95vh">
+    <div class="container rounded" style="width:auto; padding: 30px; padding-bottom: 0px; background-color: white">
+        <div class="text-center">
+            <h1 class="display-1">BitBallot</h1>
+            <p><a href="register.html" class="btn btn-primary" type="button">Register To Vote</a>
+                <a href="vote.html" class="btn btn-primary" type="button">Cast Your Vote</a></p>
+            <p><a href="tally.html" class="btn btn-info w-100">Live Results</a><br></p>
+            <p><a href="explore.html" class="btn btn-link" style="padding: 0px;"><small class="text-muted">Explore
+                Blockchain</small></a></p>
+        </div>
     </div>
 </div>
+
 <div id="footer"></div>
 <script>
     $("#footer").load('components/footer.html');
