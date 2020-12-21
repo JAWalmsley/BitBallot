@@ -2,3 +2,5 @@
 .idea/
 
 BitBallotNode/__pycache__/
+
+*.sqlite
