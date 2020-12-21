@@ -165,7 +165,13 @@ class Blockchain:
         :param db_path: the path to the database of approved user_ids to register
         """
         self.blocks = []
-        self.db_connection = sqlite3.connect(db_path).cursor()
+        self.db = db_path
+        with sqlite3.connect(self.db) as con:
+            cur = con.cursor()
+            cur.execute("""CREATE TABLE IF NOT EXISTS uids(
+                            id string PRIMARY KEY
+                        )""")
+            con.commit()
 
     def __dict__(self):
         d = {}
@@ -201,11 +207,13 @@ class Blockchain:
         :return: The block containing the new voter's registration
         :rtype RegisterBlock
         """
+        print(user_id)
         # Check if user is eligible to register
-        cur = self.db_connection
-        cur.execute("""SElECT id FROM uids WHERE id = ?""", (user_id,))
-        if not cur.fetchone():
-            raise UserNotExistError
+        with sqlite3.connect(self.db) as con:
+            cur = con.cursor()
+            cur.execute("""SElECT id FROM uids WHERE id = ?""", (user_id,))
+            if not cur.fetchone():
+                raise UserNotExistError
         prev_hash = self.get_latest_hash()
         new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, password)
         for b in self.blocks:

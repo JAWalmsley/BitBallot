@@ -1,5 +1,5 @@
 from cryptography.exceptions import InvalidSignature
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
 from blockchain import Blockchain
@@ -9,7 +9,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-bc = Blockchain()
+bc = Blockchain('approved_uids.sqlite')
 
 
 @app.route('/register', methods=['POST'])

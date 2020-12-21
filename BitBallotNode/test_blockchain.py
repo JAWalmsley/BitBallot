@@ -26,11 +26,9 @@ class BlockchainTests(unittest.TestCase):
         self.cur = self.con.cursor()
 
         self.cur.execute('''CREATE TABLE IF NOT EXISTS uids(
-                        id string PRIMARY KEY
-                    )''')
-        self.cur.executemany('''
-        INSERT OR IGNORE INTO uids VALUES(?)
-        ''', [(self.test_user_id,), (self.test_user_id2,)])
+                            id string PRIMARY KEY
+                        )''')
+        self.cur.executemany('''INSERT OR IGNORE INTO uids VALUES(?)''', [(self.test_user_id,), (self.test_user_id2,)])
         self.con.commit()
 
     def test_blockfinder_error(self):

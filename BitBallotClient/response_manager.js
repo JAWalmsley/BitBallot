@@ -28,4 +28,8 @@ switch (status) {
         $("#title")[0].innerText = "User Already Registered"
         $("#message")[0].innerText = "Sorry, that user already exists"
         break;
+    case('UserNotExist'):
+        $("#title")[0].innerText = "Invalid User ID"
+        $("#message")[0].innerText = "Sorry, that ID isn't valid. Remember to use the ID you recieved on your voting card."
+        break;
 }
