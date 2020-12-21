@@ -213,9 +213,12 @@ class Blockchain:
                     tally[b.choice] += 1
                 else:
                     tally[b.choice] = 1
-        result = {}
-        for t in tally:
-            result.append({"name":t.key, "count":t.value})
+        result = []
+        for key in tally:
+            d = {}
+            d['name'] = key
+            d['count'] = tally[key]
+            result.append(d)
         return result
 
     def register_user(self, user_id: str, password: str):
