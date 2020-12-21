@@ -200,6 +200,21 @@ class Blockchain:
                 return b
         raise UserNotRegisteredError
 
+    def get_vote_tally(self):
+        """
+        Returns the vote tallies per candidate
+        :return: The vote tallies per candidate
+        :rtype: dict
+        """
+        tally = {}
+        for b in self.blocks:
+            if type(b) == VoteBlock:
+                if b.choice in tally.keys():
+                    tally[b.choice] += 1
+                else:
+                    tally[b.choice] = 1
+        return tally
+
     def register_user(self, user_id: str, password: str):
         """
         Registers a new voter
