@@ -69,4 +69,4 @@ def get_blockchain():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.2.242')
+    app.run()
