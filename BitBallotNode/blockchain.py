@@ -1,8 +1,10 @@
 # Jack Walmsley 2020-12-02
 import abc
 import base64
+import os
 import sqlite3
 import struct
+import sys
 from datetime import datetime
 
 from cryptography.hazmat.primitives import serialization, hashes
@@ -165,7 +167,7 @@ class Blockchain:
         :param db_path: the path to the database of approved user_ids to register
         """
         self.blocks = []
-        self.db = db_path
+        self.db = os.path.join(sys.path[0], db_path)
         with sqlite3.connect(self.db) as con:
             cur = con.cursor()
             cur.execute("""CREATE TABLE IF NOT EXISTS uids(

@@ -12,7 +12,7 @@ class BlockchainTests(unittest.TestCase):
         """
         Sets up the testing suite, creating a dummy blockchain
         """
-        test_db_path = 'test_db.sqlite'
+        test_db_path = os.path.join(sys.path[0], 'test_db.sqlite')
         self.chain: Blockchain = Blockchain(test_db_path)
 
         self.test_user_id: str = 'testuserid'
