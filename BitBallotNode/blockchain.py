@@ -207,7 +207,6 @@ class Blockchain:
         :return: The block containing the new voter's registration
         :rtype RegisterBlock
         """
-        print(user_id)
         # Check if user is eligible to register
         with sqlite3.connect(self.db) as con:
             cur = con.cursor()
