@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Tally - BitBallot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery.min.js"></script>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
@@ -20,16 +19,39 @@
                 <th scope="col">Vote Count</th>
             </tr>
             </thead>
+            <tbody jput="tally">
+            <tr>
+                <td>{{json.name}}</td>
+                <td>{{json.count}}</td>
+            </tr>
+            </tbody>
             <tbody>
+
             </tbody>
         </table>
     </div>
 </div>
 <div id="footer"></div>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="jPut/js/jput-2.js"></script>
 <script>
     $("#footer").load('components/footer.html');
 </script>
-<script src="js/bootstrap.min.js"></script>
-<script src="response_manager.js"></script>
+<script>
+    $(document).ready(function () {
+        //your variable with your users information
+        var users = '[{"name": "User 1", "count": 500}]';
+        /*
+        * Binding your json to jPut
+        * jPut.<yourTemplateName>.data
+        */
+        jPut.tally.call_ajax({
+            ajax_url: '/api/get_tally',
+            prepend:true
+        });
+    });
+
+</script>
 </body>
 </html>
