@@ -1,6 +1,7 @@
 # Jack Walmsley 2020-12-02
 import abc
 import base64
+import sqlite3
 import struct
 from datetime import datetime
 
@@ -72,7 +73,7 @@ class RegisterBlock(Block):
         super().__init__(prev_hash, time, user_id)
 
         # Derive a public key from the password. Add user_id to password as salt
-        self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password+user_id).public_key()
+        self.public_key: ec.EllipticCurvePublicKey = Block.password_to_key(password + user_id).public_key()
 
     def __dict__(self):
         """
@@ -158,11 +159,13 @@ class VoteBlock(Block):
 
 
 class Blockchain:
-    def __init__(self):
+    def __init__(self, db_path: str):
         """
         A blockchain, containing many linked Blocks
+        :param db_path: the path to the database of approved user_ids to register
         """
         self.blocks = []
+        self.db_connection = sqlite3.connect(db_path).cursor()
 
     def __dict__(self):
         d = {}
@@ -198,7 +201,11 @@ class Blockchain:
         :return: The block containing the new voter's registration
         :rtype RegisterBlock
         """
-        # TODO: Implement hashing of previous block
+        # Check if user is eligible to register
+        cur = self.db_connection
+        cur.execute("""SElECT id FROM uids WHERE id = ?""", (user_id,))
+        if not cur.fetchone():
+            raise UserNotExistError
         prev_hash = self.get_latest_hash()
         new_block = RegisterBlock(prev_hash, datetime.utcnow().timestamp(), user_id, password)
         for b in self.blocks:
@@ -219,7 +226,7 @@ class Blockchain:
         """
 
         # user_id is appended to password as salt
-        user_private_key = Block.password_to_key(password+user_id)
+        user_private_key = Block.password_to_key(password + user_id)
         signature = user_private_key.sign(choice.encode(), ec.ECDSA(hashes.SHA256()))
 
         user_public_key = self.get_registration_block(user_id).public_key

@@ -12,16 +12,32 @@ class BlockchainTests(unittest.TestCase):
         """
         Sets up the testing suite, creating a dummy blockchain
         """
-        self.chain: Blockchain = Blockchain()
-        self.test_pass: str = 'password1'
-        self.test_pass2: str = 'password2'
+        test_db_path = 'test_db.sqlite'
+        self.chain: Blockchain = Blockchain(test_db_path)
+
         self.test_user_id: str = 'testuserid'
         self.test_user_id2: str = 'testuserid2'
+        self.test_pass: str = 'password1'
+        self.test_pass2: str = 'password2'
         self.test_choice = 'The Rhino Party'
         self.test_choice2 = 'The Even More Rhino Party'
 
+        self.con = sqlite3.connect(test_db_path)
+        self.cur = self.con.cursor()
+
+        self.cur.execute('''CREATE TABLE IF NOT EXISTS uids(
+                        id string PRIMARY KEY
+                    )''')
+        self.cur.executemany('''
+        INSERT OR IGNORE INTO uids VALUES(?)
+        ''', [(self.test_user_id,), (self.test_user_id2,)])
+        self.con.commit()
+
     def test_blockfinder_error(self):
         self.assertRaises(UserNotRegisteredError, self.chain.get_registration_block, 'invalidID')
+
+    def test_nonexistant_registration(self):
+        self.assertRaises(UserNotExistError, self.chain.register_user, 'invaliduserid', 'password')
 
     def register_user(self):
         """
@@ -52,6 +68,7 @@ class BlockchainTests(unittest.TestCase):
     def test_monolithic(self):
         self.register_user()
         self.cast_vote()
+
 
 if __name__ == '__main__':
     unittest.main()

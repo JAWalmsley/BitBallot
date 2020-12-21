@@ -26,6 +26,8 @@ def register():
         return 'UserAlreadyRegistered'
     except ValueError:
         return 'InvalidKey'
+    except UserNotExistError:
+        return 'UserNotExist'
     return 'Registered'
 
 
