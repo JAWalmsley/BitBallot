@@ -49,6 +49,11 @@ def vote():
     return 'Voted'
 
 
+@app.route('/tally', methods=['GET'])
+def tally():
+    return jsonify(bc.get_vote_tally())
+
+
 @app.route('/sync', methods=['POST'])
 def sync():
     """ Internally-Facing
