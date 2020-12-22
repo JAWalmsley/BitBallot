@@ -60,8 +60,12 @@ class BlockchainTests(unittest.TestCase):
         first_block = self.chain.cast_vote(self.test_user_id, self.test_pass, self.test_choice)
         self.assertIsInstance(first_block, VoteBlock)
 
-        second_block = self.chain.cast_vote(self.test_user_id2, self.test_pass2, self.test_choice)
+        second_block = self.chain.cast_vote(self.test_user_id2, self.test_pass2, self.test_choice2)
         self.assertEqual(second_block.prev_hash, first_block.get_hash())
+
+        print(self.chain.get_vote_tally())
+        # self.assertEqual(self.chain.get_vote_tally()[self.test_choice], 1)
+        # self.assertEqual(self.chain.get_vote_tally()[self.test_choice2], 1)
 
     def test_monolithic(self):
         self.register_user()

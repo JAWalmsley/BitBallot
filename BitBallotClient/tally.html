@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tally - BitBallot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="background-color: slategray">
+<div class="d-flex align-items-center" style="height:95vh">
+    <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
+        <a href="index.html" class="btn btn-secondary" type="button">Back</a>
+        <h1 class="display-1" id="title">Vote Tally</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Candidate</th>
+                <th scope="col">Vote Count</th>
+            </tr>
+            </thead>
+            <tbody jput="tally">
+            <tr>
+                <td>{{json.name}}</td>
+                <td>{{json.count}}</td>
+            </tr>
+            </tbody>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="footer"></div>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="jPut/js/jput-2.js"></script>
+<script>
+    $("#footer").load('components/footer.html');
+</script>
+<script>
+    $(document).ready(function () {
+        jPut.tally.call_ajax({
+            ajax_url: 'http://192.168.2.142/api/get_tally',
+            prepend:true
+        });
+    });
+
+</script>
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+</body>
+</html>
