@@ -1,15 +1,21 @@
 from cryptography.exceptions import InvalidSignature
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO
 
 from blockchain import Blockchain
 from exceptions import *
 
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+# app.config['CORS_HEADERS'] = 'Content-Type'
+socketio = SocketIO(app, cors_allowed_origins='http://localhost')
 
 bc = Blockchain('approved_uids.sqlite')
+
+
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    print('received json: ' + str(json))
 
 
 @app.route('/register', methods=['POST'])
@@ -46,6 +52,7 @@ def vote():
         return 'InvalidSignature'
     except UserNotRegisteredError:
         return 'UserNotRegistered'
+    socketio.emit('new_vote', get_tally())
     return 'Voted'
 
 
@@ -71,8 +78,8 @@ def sync():
 @app.route('/get_blockchain', methods=['GET'])
 @cross_origin()
 def get_blockchain():
-    return jsonify(bc.__dict__())
+    return jsonify(bc.__dict__)
 
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)

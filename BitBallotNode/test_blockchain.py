@@ -28,26 +28,33 @@ class BlockchainTests(unittest.TestCase):
         self.cur.execute('''CREATE TABLE IF NOT EXISTS uids(
                             id string PRIMARY KEY
                         )''')
-        self.cur.executemany('''INSERT OR IGNORE INTO uids VALUES(?)''', [(self.test_user_id,), (self.test_user_id2,)])
+        self.cur.executemany('''INSERT OR IGNORE INTO uids VALUES(?)''', [
+                             (self.test_user_id,), (self.test_user_id2,)])
         self.con.commit()
 
     def test_blockfinder_error(self):
-        self.assertRaises(UserNotRegisteredError, self.chain.get_registration_block, 'invalidID')
+        self.assertRaises(UserNotRegisteredError,
+                          self.chain.get_registration_block, 'invalidID')
 
     def test_nonexistant_registration(self):
-        self.assertRaises(UserNotExistError, self.chain.register_user, 'invaliduserid', 'password')
+        self.assertRaises(
+            UserNotExistError, self.chain.register_user, 'invaliduserid', 'password')
 
     def register_user(self):
         """
         Tests the registration function of the blockchain
         """
-        first_block = self.chain.register_user(self.test_user_id, self.test_pass)
+        first_block = self.chain.register_user(
+            self.test_user_id, self.test_pass)
         self.assertIsInstance(first_block, RegisterBlock)
-        self.assertEqual(self.chain.get_registration_block(self.test_user_id), first_block)
+        self.assertEqual(self.chain.get_registration_block(
+            self.test_user_id), first_block)
 
-        self.assertRaises(UserAlreadyExistsError, self.chain.register_user, self.test_user_id, self.test_pass)
+        self.assertRaises(UserAlreadyExistsError,
+                          self.chain.register_user, self.test_user_id, self.test_pass)
 
-        second_block = self.chain.register_user(self.test_user_id2, self.test_pass2)
+        second_block = self.chain.register_user(
+            self.test_user_id2, self.test_pass2)
         self.assertEqual(second_block.prev_hash, first_block.get_hash())
 
     def cast_vote(self):
@@ -55,12 +62,15 @@ class BlockchainTests(unittest.TestCase):
         Tests using the registered user to vote
         """
         with self.assertRaises(InvalidSignature):
-            self.chain.cast_vote(self.test_user_id, 'badpassword', 'The Hippopotamus Party')
+            self.chain.cast_vote(
+                self.test_user_id, 'badpassword', 'The Hippopotamus Party')
 
-        first_block = self.chain.cast_vote(self.test_user_id, self.test_pass, self.test_choice)
+        first_block = self.chain.cast_vote(
+            self.test_user_id, self.test_pass, self.test_choice)
         self.assertIsInstance(first_block, VoteBlock)
 
-        second_block = self.chain.cast_vote(self.test_user_id2, self.test_pass2, self.test_choice2)
+        second_block = self.chain.cast_vote(
+            self.test_user_id2, self.test_pass2, self.test_choice2)
         self.assertEqual(second_block.prev_hash, first_block.get_hash())
 
         print(self.chain.get_vote_tally())

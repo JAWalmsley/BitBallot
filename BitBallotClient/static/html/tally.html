@@ -31,20 +31,19 @@
 </div>
 <div id="footer"></div>
 <script src="https://code.jquery.com/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="jPut/js/jput-2.js"></script>
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js"
+        integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ=="
+        crossorigin="anonymous"></script>
 <script>
     $("#footer").load('components/footer.html');
 </script>
 <script>
-    $(document).ready(function () {
-        jPut.tally.call_ajax({
-            ajax_url: '/api/get_tally',
-            prepend:true
-        });
+    const socket = io("localhost:5000");
+    socket.on('new_vote', function(msg) {
+        console.log(msg);
     });
-
 </script>
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 </body>
 </html>
