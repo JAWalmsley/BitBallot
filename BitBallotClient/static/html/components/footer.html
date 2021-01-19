@@ -1,5 +1,9 @@
 <footer>
     <div class="container text-center">
-        <small>Copyright &copy; 2020 Jack Walmsley. All Rights Reserved</small>
+        <small>Copyright &copy; <span id="date"></span> Jack Walmsley. All Rights Reserved</small>
     </div>
+    <script>
+        let d = new Date();
+        document.getElementById("date").innerHTML = d.getFullYear();
+    </script>
 </footer>

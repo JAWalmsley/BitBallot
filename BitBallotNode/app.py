@@ -78,7 +78,7 @@ def sync():
 @app.route('/get_blockchain', methods=['GET'])
 @cross_origin()
 def get_blockchain():
-    return jsonify(bc.__dict__)
+    return jsonify(bc.__dict__())
 
 
 if __name__ == '__main__':

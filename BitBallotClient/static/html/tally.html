@@ -8,7 +8,7 @@
 <body style="background-color: slategray">
 <div class="d-flex align-items-center" style="height:95vh">
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
-        <a href="index.html" class="btn btn-secondary" type="button">Back</a>
+        <a href="/static/html/index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1" id="title">Vote Tally</h1>
         <table class="table">
             <thead>
@@ -31,12 +31,12 @@
 </div>
 <div id="footer"></div>
 <script src="https://code.jquery.com/jquery.min.js"></script>
-<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js"
         integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ=="
         crossorigin="anonymous"></script>
 <script>
-    $("#footer").load('components/footer.html');
+    $("#footer").load('/static/html/components/footer.html');
 </script>
 <script>
     const socket = io("localhost:5000");
@@ -44,6 +44,6 @@
         console.log(msg);
     });
 </script>
-<link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 </body>
 </html>
