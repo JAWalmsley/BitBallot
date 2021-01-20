@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tally - BitBallot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="background-color: slategray">
+<div class="d-flex align-items-center" style="height:95vh">
+    <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
+        <a href="/static/html/index.html" class="btn btn-secondary" type="button">Back</a>
+        <h1 class="display-1" id="title">Vote Tally</h1>
+        <table id="tallytable">
+            <thead>
+            <tr>
+                <th scope="col">Candidate</th>
+                <th scope="col">Vote Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="footer"></div>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js"
+        integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ=="
+        crossorigin="anonymous"></script>
+<script>
+    $("#footer").load('/static/html/components/footer.html');
+</script>
+<script>
+    const socket = io("http://192.168.2.142");
+    socket.on('connect', function () {
+        console.log('connected');
+    })
+    socket.on('new_vote', function (msg) {
+        updateTable(msg)
+    });
+
+    function updateTable(data) {
+        let table = document.getElementById("tallytable").getElementsByTagName('tbody')[0];
+        table.innerHTML = ''
+        console.log(data)
+        data.forEach(function (entry) {
+            let newRow = table.insertRow();
+            let newCell = newRow.insertCell(-1);
+            newCell.innerHTML = entry.name;
+            newCell = newRow.insertCell(-1);
+            newCell.innerHTML = entry.count;
+        });
+    }
+
+</script>
+<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+</body>
+</html>

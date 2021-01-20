@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <title>Blockchain Explorer - BitBallot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="json-view-master/dist/jsonview.bundle.css">
-    <script src="json-view-master/dist/jsonview.bundle.js"></script>
+    <link rel="stylesheet" href="/lib/json-view-master/dist/jsonview.bundle.css">
+    <script src="/lib/json-view-master/dist/jsonview.bundle.js"></script>
     <script src="https://code.jquery.com/jquery.min.js"></script>
 </head>
 <body style="background-color: slategray">
 <div class="d-flex align-items-center" style="padding-top: 100px">
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
-        <a href="index.html" class="btn btn-secondary" type="button">Back</a>
+        <a href="/static/html/index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1">Blockchain Explorer</h1>
         <div class="root"></div>
     </div>
 </div>
 
-<script src="js/bootstrap.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script>
     let jsondata;
 
@@ -31,6 +31,6 @@
 
     const tree = JsonView.renderJSON(jsondata, document.querySelector('.root'));
 </script>
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 </body>
 </html>

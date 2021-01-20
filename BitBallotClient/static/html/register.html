@@ -9,7 +9,7 @@
 <body style="background-color: slategray">
 <div class="d-flex align-items-center" style="height:95vh">
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
-        <a href="index.html" class="btn btn-secondary" type="button">Back</a>
+        <a href="/static/html/index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1">Register</h1>
         <form method="post" action="/api/register">
             <div class="form-group">
@@ -28,10 +28,10 @@
 </div>
 <div id="footer"></div>
 <script>
-    $("#footer").load('components/footer.html');
+    $("#footer").load('/static/html/components/footer.html');
 </script>
-<script src="js/bootstrap.min.js"></script>
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<script src="form_handler.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="/static/js/form_handler.js"></script>
 </body>
 </html>

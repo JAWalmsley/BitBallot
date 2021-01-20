@@ -206,9 +206,11 @@ class Blockchain:
         :return: The vote tallies per candidate
         :rtype: dict
         """
+        voters = []
         tally = {}
-        for b in self.blocks:
-            if type(b) == VoteBlock:
+        for b in reversed(self.blocks):
+            if b.user_id not in voters and type(b) == VoteBlock:
+                voters.append(b.user_id)
                 if b.choice in tally.keys():
                     tally[b.choice] += 1
                 else:
