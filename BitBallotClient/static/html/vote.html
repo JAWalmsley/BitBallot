@@ -35,6 +35,7 @@
                 </select>
             </div>
             <input type="button" class="btn btn-primary" value="Vote">
+            <video id="scanner" style="width:50vw;"></video>
         </form>
     </div>
 </div>
@@ -42,8 +43,15 @@
 <script>
     $("#footer").load('components/footer.html');
 </script>
-<script src="../../lib/bootstrap/js/bootstrap.min.js"></script>
-<script src="../js/form_handler.js"></script>
-<link href="../../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/form_handler.js"></script>
+<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script type="module">
+    import QRScanner from '/lib/qr-scanner/qr-scanner.min.js';
+    QRScanner.WORKER_PATH = '/lib/qr-scanner/qr-scanner-worker.min.js';
+    let videoElem = document.getElementById("scanner");
+    const qrScanner = new QRScanner(videoElem, result => console.log(result));
+    qrScanner.start();
+</script>
 </body>
 </html>
