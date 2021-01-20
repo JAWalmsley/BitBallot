@@ -32,7 +32,7 @@
     $("#footer").load('/static/html/components/footer.html');
 </script>
 <script>
-    const socket = io("http://192.168.2.142");
+    const socket = io();
     socket.on('connect', function () {
         console.log('connected');
     })
