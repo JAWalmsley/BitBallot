@@ -10,21 +10,14 @@
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
         <a href="/static/html/index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1" id="title">Vote Tally</h1>
-        <table class="table">
+        <table id="tallytable">
             <thead>
             <tr>
                 <th scope="col">Candidate</th>
                 <th scope="col">Vote Count</th>
             </tr>
             </thead>
-            <tbody jput="tally">
-            <tr>
-                <td>{{json.name}}</td>
-                <td>{{json.count}}</td>
-            </tr>
-            </tbody>
             <tbody>
-
             </tbody>
         </table>
     </div>
@@ -39,10 +32,26 @@
     $("#footer").load('/static/html/components/footer.html');
 </script>
 <script>
-    const socket = io("localhost:5000");
-    socket.on('new_vote', function(msg) {
-        console.log(msg);
+    let table = document.getElementById("tallytable").getElementsByTagName('tbody')[0];
+    // let data = JSON.parse('[{"name":"The Hippopotamus Party","count":1},{"name":"The Rhino-Hippopotamus Coalition Party","count":1}]')
+    const socket = io("http://192.168.2.142");
+    let data;
+    socket.on('connect', function () {
+        console.log('connected');
+    })
+    socket.on('new_vote', function (msg) {
+        table.innerHTML = ''
+        data = msg;
+        console.log(data)
+        data.forEach(function (entry) {
+            let newRow = table.insertRow();
+            let newCell = newRow.insertCell(-1);
+            newCell.innerHTML = entry.name;
+            newCell = newRow.insertCell(-1);
+            newCell.innerHTML = entry.count;
+        });
     });
+
 </script>
 <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 </body>
