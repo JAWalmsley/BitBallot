@@ -32,16 +32,17 @@
     $("#footer").load('/static/html/components/footer.html');
 </script>
 <script>
-    let table = document.getElementById("tallytable").getElementsByTagName('tbody')[0];
-    // let data = JSON.parse('[{"name":"The Hippopotamus Party","count":1},{"name":"The Rhino-Hippopotamus Coalition Party","count":1}]')
     const socket = io("http://192.168.2.142");
-    let data;
     socket.on('connect', function () {
         console.log('connected');
     })
     socket.on('new_vote', function (msg) {
+        updateTable(msg)
+    });
+
+    function updateTable(data) {
+        let table = document.getElementById("tallytable").getElementsByTagName('tbody')[0];
         table.innerHTML = ''
-        data = msg;
         console.log(data)
         data.forEach(function (entry) {
             let newRow = table.insertRow();
@@ -50,7 +51,7 @@
             newCell = newRow.insertCell(-1);
             newCell.innerHTML = entry.count;
         });
-    });
+    }
 
 </script>
 <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">

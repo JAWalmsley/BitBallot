@@ -1,7 +1,7 @@
 from cryptography.exceptions import InvalidSignature
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, emit
 
 from blockchain import Blockchain
 from exceptions import *
@@ -59,7 +59,7 @@ def vote():
 
 @socketio.on('connect')
 def get_tally():
-    send(bc.get_vote_tally())
+    emit('new_vote', bc.get_vote_tally())
 
 
 @app.route('/sync', methods=['POST'])
