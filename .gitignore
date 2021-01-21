@@ -4,3 +4,5 @@
 BitBallotNode/__pycache__/
 
 *.sqlite
+
+Card Generator/output/
