@@ -11,12 +11,15 @@
     <div class="container rounded" style="width:auto; padding: 30px; background-color: white">
         <a href="index.html" class="btn btn-secondary" type="button">Back</a>
         <h1 class="display-1">Vote</h1>
-        <video id="scanner" style="width:50vw;"></video>
+        <video id="scanner" style="width:50vw;display:none"></video>
         <form method="post" action="/api/vote">
             <div class="form-group">
                 <label for="user_id">User ID</label>
-                <input required type="text" class="form-control" id="user_id" placeholder="User ID" name="user_id">
-                <small id="useridHelp" class="form-text text-muted">Scan your QR code</small>
+                <div class="input-group">
+                    <input required type="text" class="form-control" id="user_id" placeholder="User ID" name="user_id">
+                    <input id="open-qr" type="button" class="btn btn-secondary" value="Scan QR Code">
+                </div>
+                <small id="useridHelp" class="form-text text-muted">Found on your Elector Card</small>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -31,11 +34,10 @@
                     <option name="The Rhino Party">The Rhino Party</option>
                     <option name="The Extra Rhino Party">The Extra Rhino Party</option>
                     <option name="The Hippopotamus Party">The Hippopotamus Party</option>
-                    <option name="The Rhino-Hippopotamus Coalition Party">The Rhino-Hippopotamus Coalition Party
-                    </option>
+                    <option name="The Rhino-Hippopotamus Coalition Party">The Rhino-Hippopotamus Coalition Party</option>
                 </select>
             </div>
-            <input type="button" class="btn btn-primary" value="Vote">
+            <input id="submit" type="button" class="btn btn-primary" value="Vote">
         </form>
     </div>
 </div>

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.btn-primary').click(function() {
+    $('#submit').click(function() {
         $.ajax({
             type: "POST",
             url: $('form').attr('action'),
